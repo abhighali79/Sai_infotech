@@ -2,6 +2,9 @@ const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET |
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "your-cloud-name";
 
 export async function uploadToCloudinary(file: File): Promise<string> {
+  console.log('Starting upload with cloud name:', CLOUDINARY_CLOUD_NAME);
+  console.log('Upload preset:', CLOUDINARY_UPLOAD_PRESET);
+
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
@@ -16,20 +19,28 @@ export async function uploadToCloudinary(file: File): Promise<string> {
       }
     );
 
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+    const responseText = await response.text();
+    console.log('Response text:', responseText);
+
     if (!response.ok) {
-      throw new Error(`Upload failed: ${response.statusText}`);
+      throw new Error(`Upload failed: ${response.status} ${response.statusText} - ${responseText}`);
     }
 
-    const data = await response.json();
+    const data = JSON.parse(responseText);
     
     if (data.error) {
+      console.error('Cloudinary API error:', data.error);
       throw new Error(data.error.message);
     }
 
+    console.log('Upload successful:', data.secure_url);
     return data.secure_url;
   } catch (error) {
     console.error('Cloudinary upload error:', error);
-    throw new Error('Failed to upload image. Please check your Cloudinary configuration.');
+    throw new Error(`Failed to upload image: ${error.message}`);
   }
 }
 
