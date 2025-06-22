@@ -13,7 +13,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
   const handleWhatsAppInquiry = (e: React.MouseEvent) => {
     e.stopPropagation();
     const message = `Hi! I'm interested in the ${product.name}. Can you provide more details?`;
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/917411180528?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 

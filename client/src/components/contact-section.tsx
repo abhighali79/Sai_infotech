@@ -5,7 +5,7 @@ import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react";
 export default function ContactSection() {
   const handleWhatsAppContact = () => {
     const message = "Hi! I would like to know more about your products and services.";
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/917411180528?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -13,19 +13,19 @@ export default function ContactSection() {
     {
       icon: MapPin,
       title: "Store Address",
-      content: "123 Tech Street, Electronics Market, City - 123456",
+      content: "Athani-Gokak Rd, near HVH College, Harugeri, Karnataka 591220",
       color: "sai-primary"
     },
     {
       icon: Phone,
       title: "Phone Number",
-      content: "+91 98765 43210",
+      content: "+91 74111 80528",
       color: "sai-secondary"
     },
     {
       icon: Mail,
       title: "Email Address",
-      content: "info@saiinfotech.com",
+      content: "saiinfotech406@gmail.com",
       color: "sai-accent"
     },
     {
@@ -82,12 +82,17 @@ export default function ContactSection() {
           </div>
           
           <div>
-            <div className="w-full h-full bg-gray-200 rounded-xl shadow-md flex items-center justify-center min-h-[400px]">
-              <div className="text-center text-gray-500">
-                <MapPin className="h-16 w-16 mx-auto mb-4" />
-                <p className="text-lg font-semibold">Store Location</p>
-                <p>Visit us at our electronics store</p>
-              </div>
+            <div className="w-full h-full rounded-xl shadow-md overflow-hidden min-h-[400px]">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3825.284632001825!2d74.94509207514537!3d16.511721984233727!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc0cbc33d85e78b%3A0xa06691430d32aaed!2sSAI%20INFOTECH!5e0!3m2!1sen!2sin!4v1750590639729!5m2!1sen!2sin" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0, minHeight: '400px' }}
+                allowFullScreen={true}
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                title="SAI INFOTECH Store Location"
+              />
             </div>
           </div>
         </div>
