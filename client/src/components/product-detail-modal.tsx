@@ -18,12 +18,12 @@ export default function ProductDetailModal({ product, isOpen, onClose }: Product
 
   const handleWhatsAppInquiry = () => {
     const message = `Hi! I'm interested in the ${product.name}. Can you provide more details about pricing and availability?`;
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/917411180528?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleCallStore = () => {
-    window.open('tel:+919876543210', '_self');
+    window.open('tel:+917411180528', '_self');
   };
 
   const renderStars = (rating: number) => {
@@ -160,7 +160,7 @@ export default function ProductDetailModal({ product, isOpen, onClose }: Product
                 size="lg"
               >
                 <Phone className="h-5 w-5 mr-2" />
-                Call Store: +91 98765 43210
+                Call Store: +91 7411180528
               </Button>
             </div>
           </div>
