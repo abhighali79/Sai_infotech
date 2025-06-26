@@ -83,7 +83,7 @@ Can you provide more details about pricing, availability, and specifications?`;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="product-description">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-sai-text">{product.name}</DialogTitle>
         </DialogHeader>
@@ -145,12 +145,12 @@ Can you provide more details about pricing, availability, and specifications?`;
             
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-3">Product Description</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p id="product-description" className="text-gray-600 leading-relaxed">
                 {product.fullDescription || product.shortDescription || "High-quality product with excellent features and reliable performance."}
               </p>
             </div>
             
-            {product.specifications && (
+            {product.specifications && renderSpecifications() && (
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-3">Specifications</h3>
                 {renderSpecifications()}

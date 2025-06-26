@@ -32,17 +32,27 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<ProductWithCategory | null>(null);
 
   // Fetch stats
-  const { data: stats } = useQuery({
+  const { data: stats = {
+    totalProducts: "0",
+    activeCategories: "0", 
+    monthlyViews: "0",
+    whatsappInquiries: "0"
+  } } = useQuery<{
+    totalProducts: string;
+    activeCategories: string;
+    monthlyViews: string;
+    whatsappInquiries: string;
+  }>({
     queryKey: ["/api/admin/stats"],
   });
 
   // Fetch products for admin
-  const { data: products, isLoading: productsLoading } = useQuery({
+  const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategory[]>({
     queryKey: ["/api/products", { search: searchQuery, category: categoryFilter }],
   });
 
   // Fetch categories
-  const { data: categories } = useQuery({
+  const { data: categories = [] } = useQuery<Array<{id: number; name: string; slug: string}>>({
     queryKey: ["/api/categories"],
   });
 

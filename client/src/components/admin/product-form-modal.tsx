@@ -38,7 +38,7 @@ export default function ProductFormModal({ isOpen, onClose, product }: ProductFo
   const [isUploading, setIsUploading] = useState(false);
 
   // Fetch categories
-  const { data: categories } = useQuery({
+  const { data: categories = [] } = useQuery<Array<{id: number; name: string; slug: string}>>({
     queryKey: ["/api/categories"],
   });
 
@@ -232,12 +232,16 @@ export default function ProductFormModal({ isOpen, onClose, product }: ProductFo
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby="product-form-description">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-sai-text">
             {product ? "Edit Product" : "Add New Product"}
           </DialogTitle>
         </DialogHeader>
+        
+        <p id="product-form-description" className="sr-only">
+          Form to {product ? "edit existing product" : "add new product"} details including name, description, price, and images.
+        </p>
         
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

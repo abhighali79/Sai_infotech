@@ -23,11 +23,11 @@ export default function ProductCatalog({ categoryFilter }: ProductCatalogProps) 
   // Filter out "all" value for API call
   const apiCategoryFilter = activeCategoryFilter === "all" ? "" : activeCategoryFilter;
 
-  const { data: products, isLoading } = useQuery({
+  const { data: products = [], isLoading } = useQuery<ProductWithCategory[]>({
     queryKey: ["/api/products", { search: searchQuery, category: apiCategoryFilter }],
   });
 
-  const { data: categories } = useQuery({
+  const { data: categories = [] } = useQuery<Array<{id: number; name: string; slug: string}>>({
     queryKey: ["/api/categories"],
   });
 
