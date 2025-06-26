@@ -42,37 +42,47 @@ export default function ProductCatalog({ categoryFilter }: ProductCatalogProps) 
   };
 
   return (
-    <section id="products" className="py-16 bg-sai-background">
+    <section id="products" className="py-20 bg-gradient-to-b from-white via-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-sai-text">Featured Products</h2>
-          
-          {/* Search and Filter */}
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-full sm:w-64 form-input"
-              />
-            </div>
-            <Select value={localCategoryFilter} onValueChange={setLocalCategoryFilter}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories?.map((category) => (
-                  <SelectItem key={category.id} value={category.slug}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 border border-blue-200 rounded-full mb-6">
+            <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
+            <span className="text-sm font-medium text-blue-700">Our Products</span>
           </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Discover Our <span className="text-blue-600">Premium Collection</span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Explore our carefully curated selection of high-quality computers, laptops, and CCTV systems designed to meet all your technology needs.
+          </p>
+        </div>
+
+        {/* Search and Filter */}
+        <div className="flex flex-col lg:flex-row justify-center items-center gap-6 mb-12">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-12 pr-4 py-3 w-80 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 text-lg"
+            />
+          </div>
+          <Select value={localCategoryFilter} onValueChange={setLocalCategoryFilter}>
+            <SelectTrigger className="w-64 h-12 border-2 border-gray-200 rounded-xl text-lg">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories?.map((category) => (
+                <SelectItem key={category.id} value={category.slug}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Product Grid */}
