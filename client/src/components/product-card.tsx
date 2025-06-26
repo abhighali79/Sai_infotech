@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Star, Package } from "lucide-react";
+import { MessageCircle, Package } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
 import { optimizeImageUrl } from "@/lib/cloudinary";
 
@@ -31,26 +31,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
     }
   };
 
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
 
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />);
-    }
-
-    if (hasHalfStar) {
-      stars.push(<Star key="half" className="h-4 w-4 fill-yellow-400 text-yellow-400" style={{ clipPath: 'inset(0 50% 0 0)' }} />);
-    }
-
-    const remainingStars = 5 - Math.ceil(rating);
-    for (let i = 0; i < remainingStars; i++) {
-      stars.push(<Star key={`empty-${i}`} className="h-4 w-4 text-gray-300" />);
-    }
-
-    return stars;
-  };
 
   // Optimize image for different screen sizes to reduce data usage
   const getOptimizedImageUrl = (url: string) => {
@@ -97,20 +78,10 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           {product.shortDescription || "High-quality product with excellent features"}
         </p>
         
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 sm:mb-3 gap-1 sm:gap-0">
+        <div className="mb-2 sm:mb-3">
           <span className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
             ₹{parseFloat(product.price).toLocaleString()}
           </span>
-          
-          {/* Show ratings only on larger screens */}
-          <div className="hidden sm:flex items-center space-x-1">
-            <div className="flex">
-              {renderStars(parseFloat(product.rating || "0"))}
-            </div>
-            <span className="text-xs lg:text-sm text-gray-500 ml-1">
-              ({product.reviewCount || 0})
-            </span>
-          </div>
         </div>
         
         <Button 

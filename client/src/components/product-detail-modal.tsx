@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Phone, Star, Package } from "lucide-react";
+import { MessageCircle, Phone, Package } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
 import { useState } from "react";
 
@@ -38,26 +38,7 @@ Can you provide more details about pricing, availability, and specifications?`;
     window.open('tel:+917411180528', '_self');
   };
 
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
 
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />);
-    }
-
-    if (hasHalfStar) {
-      stars.push(<Star key="half" className="h-4 w-4 fill-yellow-400 text-yellow-400" style={{ clipPath: 'inset(0 50% 0 0)' }} />);
-    }
-
-    const remainingStars = 5 - Math.ceil(rating);
-    for (let i = 0; i < remainingStars; i++) {
-      stars.push(<Star key={`empty-${i}`} className="h-4 w-4 text-gray-300" />);
-    }
-
-    return stars;
-  };
 
   const renderSpecifications = (): React.ReactNode => {
     if (!product.specifications) return null;
@@ -137,14 +118,7 @@ Can you provide more details about pricing, availability, and specifications?`;
                   {product.category.name}
                 </Badge>
               )}
-              <div className="flex items-center mb-4">
-                <div className="flex mr-2">
-                  {renderStars(parseFloat(product.rating || "0"))}
-                </div>
-                <span className="text-gray-600">
-                  ({parseFloat(product.rating || "0").toFixed(1)} stars, {product.reviewCount || 0} reviews)
-                </span>
-              </div>
+
               <p className="text-4xl font-bold text-sai-primary mb-6">
                 ₹{parseFloat(product.price).toLocaleString()}
               </p>

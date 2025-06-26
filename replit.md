@@ -117,6 +117,12 @@ Changelog:
 - June 26, 2025. Cloudinary image upload functionality configured
 - June 26, 2025. Project optimized for production deployment
 - June 26, 2025. Fixed TypeScript errors and accessibility issues
+- June 26, 2025. Fixed duplicate SKU/slug errors for product creation
+- June 26, 2025. Added missing product categories (Laptops, Monitors, CPUs, Accessories, CCTV)
+- June 26, 2025. Optimized for mobile responsiveness with 2-column layout
+- June 26, 2025. Implemented pagination system for 1000+ products
+- June 26, 2025. Added image optimization to reduce data usage by ~70%
+- June 26, 2025. Removed star ratings and reviews for cleaner product display
 ```
 
 ## User Preferences
