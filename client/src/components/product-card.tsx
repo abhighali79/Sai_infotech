@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Star, Package } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
+import { optimizeImageUrl } from "@/lib/cloudinary";
 
 interface ProductCardProps {
   product: ProductWithCategory;
@@ -51,40 +52,62 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
     return stars;
   };
 
+  // Optimize image for different screen sizes to reduce data usage
+  const getOptimizedImageUrl = (url: string) => {
+    try {
+      return optimizeImageUrl(url, {
+        width: 300,
+        height: 300,
+        crop: 'fill',
+        quality: 'auto:low',
+        format: 'auto'
+      });
+    } catch {
+      return url; // Fallback to original URL if optimization fails
+    }
+  };
+
   return (
-    <Card className="bg-white hover:shadow-xl transition-all cursor-pointer card-hover" onClick={onClick}>
-      <div className="relative">
+    <Card className="bg-white hover:shadow-xl transition-all duration-300 cursor-pointer group h-full flex flex-col" onClick={onClick}>
+      <div className="relative flex-shrink-0">
         {product.images && product.images.length > 0 ? (
           <img 
-            src={product.images[0]} 
+            src={getOptimizedImageUrl(product.images[0])} 
             alt={product.name}
-            className="w-full h-48 object-cover rounded-t-xl"
+            className="w-full h-32 sm:h-40 lg:h-48 object-cover rounded-t-xl group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
           />
         ) : (
-          <div className="w-full h-48 bg-gray-200 rounded-t-xl flex items-center justify-center">
-            <Package className="h-12 w-12 text-gray-400" />
+          <div className="w-full h-32 sm:h-40 lg:h-48 bg-gray-200 rounded-t-xl flex items-center justify-center">
+            <Package className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 text-gray-400" />
           </div>
         )}
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-1 sm:top-2 right-1 sm:right-2">
           {getStockBadge()}
         </div>
       </div>
       
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-lg mb-2 text-sai-text line-clamp-2">{product.name}</h3>
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+      <CardContent className="p-2 sm:p-3 lg:p-4 flex-1 flex flex-col">
+        <h3 className="font-semibold text-sm sm:text-base lg:text-lg mb-1 sm:mb-2 text-gray-900 line-clamp-2 flex-shrink-0">
+          {product.name}
+        </h3>
+        
+        {/* Show description only on larger screens to save space on mobile */}
+        <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2 hidden sm:block flex-grow">
           {product.shortDescription || "High-quality product with excellent features"}
         </p>
         
-        <div className="flex justify-between items-center mb-3">
-          <span className="text-2xl font-bold text-sai-primary">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 sm:mb-3 gap-1 sm:gap-0">
+          <span className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
             ₹{parseFloat(product.price).toLocaleString()}
           </span>
-          <div className="flex items-center space-x-1">
+          
+          {/* Show ratings only on larger screens */}
+          <div className="hidden sm:flex items-center space-x-1">
             <div className="flex">
               {renderStars(parseFloat(product.rating || "0"))}
             </div>
-            <span className="text-sm text-gray-500 ml-1">
+            <span className="text-xs lg:text-sm text-gray-500 ml-1">
               ({product.reviewCount || 0})
             </span>
           </div>
@@ -92,10 +115,12 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         
         <Button 
           onClick={handleWhatsAppInquiry}
-          className="w-full bg-sai-secondary text-white hover:bg-sai-secondary-dark touch-target"
+          className="w-full bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm py-2 sm:py-2.5 mt-auto"
+          size="sm"
         >
-          <MessageCircle className="h-4 w-4 mr-2" />
-          Inquire on WhatsApp
+          <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">Inquire on WhatsApp</span>
+          <span className="sm:hidden">WhatsApp</span>
         </Button>
       </CardContent>
     </Card>

@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, Package, ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "./product-card";
 import ProductDetailModal from "./product-detail-modal";
 import type { ProductWithCategory } from "@shared/schema";
@@ -17,19 +17,62 @@ export default function ProductCatalog({ categoryFilter }: ProductCatalogProps) 
   const [localCategoryFilter, setLocalCategoryFilter] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20; // Show 20 products per page for optimal loading
 
   // Use the prop categoryFilter if it's set, otherwise use local state
   const activeCategoryFilter = categoryFilter || localCategoryFilter;
   // Filter out "all" value for API call
   const apiCategoryFilter = activeCategoryFilter === "all" ? "" : activeCategoryFilter;
 
-  const { data: products = [], isLoading } = useQuery<ProductWithCategory[]>({
-    queryKey: ["/api/products", { search: searchQuery, category: apiCategoryFilter }],
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, apiCategoryFilter]);
+
+  const { data: allProducts = [], isLoading } = useQuery<ProductWithCategory[]>({
+    queryKey: ["/api/products"],
   });
 
   const { data: categories = [] } = useQuery<Array<{id: number; name: string; slug: string}>>({
     queryKey: ["/api/categories"],
   });
+
+  // Client-side filtering and pagination for optimal performance
+  const filteredProducts = useMemo(() => {
+    let filtered = allProducts;
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (product) =>
+          product.name.toLowerCase().includes(query) ||
+          product.shortDescription?.toLowerCase().includes(query) ||
+          product.category?.name.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply category filter
+    if (apiCategoryFilter) {
+      filtered = filtered.filter(
+        (product) => product.category?.slug === apiCategoryFilter
+      );
+    }
+
+    return filtered;
+  }, [allProducts, searchQuery, apiCategoryFilter]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(totalPages, page)));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleProductClick = (product: ProductWithCategory) => {
     setSelectedProduct(product);
@@ -85,35 +128,107 @@ export default function ProductCatalog({ categoryFilter }: ProductCatalogProps) 
           </Select>
         </div>
 
-        {/* Product Grid */}
+        {/* Product Grid - Mobile: 2 cols, Tablet: 3 cols, Desktop: 4+ cols */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
+            {[...Array(10)].map((_, i) => (
               <div key={i} className="bg-white rounded-xl shadow-md overflow-hidden">
-                <div className="w-full h-48 bg-gray-200 image-loading"></div>
-                <div className="p-4 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded image-loading"></div>
-                  <div className="h-3 bg-gray-200 rounded w-3/4 image-loading"></div>
-                  <div className="h-6 bg-gray-200 rounded w-1/2 image-loading"></div>
+                <div className="w-full h-32 sm:h-40 lg:h-48 bg-gray-200 image-loading"></div>
+                <div className="p-2 sm:p-3 lg:p-4 space-y-2">
+                  <div className="h-3 sm:h-4 bg-gray-200 rounded image-loading"></div>
+                  <div className="h-2 sm:h-3 bg-gray-200 rounded w-3/4 image-loading"></div>
+                  <div className="h-4 sm:h-5 lg:h-6 bg-gray-200 rounded w-1/2 image-loading"></div>
                 </div>
               </div>
             ))}
           </div>
-        ) : products?.length === 0 ? (
+        ) : currentProducts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-lg text-gray-600 mb-4">No products found</p>
-            <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+            <div className="text-gray-400 mb-4">
+              <Package className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4" />
+              <p className="text-lg text-gray-600 mb-2">No products found</p>
+              <p className="text-sm sm:text-base text-gray-500">Try adjusting your search or filter criteria</p>
+            </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products?.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onClick={() => handleProductClick(product)}
-              />
-            ))}
-          </div>
+          <>
+            {/* Results Count */}
+            <div className="text-center mb-6">
+              <p className="text-gray-600">
+                Showing {startIndex + 1}-{Math.min(endIndex, filteredProducts.length)} of {filteredProducts.length} products
+              </p>
+            </div>
+
+            {/* Product Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
+              {currentProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onClick={() => handleProductClick(product)}
+                />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t">
+                <div className="text-sm text-gray-500">
+                  Page {currentPage} of {totalPages}
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => goToPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="h-10 w-10 p-0"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  
+                  {/* Page Numbers */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => goToPage(pageNum)}
+                          className="h-10 w-10 p-0 text-sm"
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => goToPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="h-10 w-10 p-0"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
