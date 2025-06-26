@@ -235,10 +235,33 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createProduct(product: InsertProduct): Promise<Product> {
+    // Generate unique slug
+    let slug = product.slug;
+    let counter = 1;
+    
+    // Check if slug already exists and make it unique
+    while (true) {
+      const existing = await db
+        .select({ id: products.id })
+        .from(products)
+        .where(eq(products.slug, slug))
+        .limit(1);
+      
+      if (existing.length === 0) {
+        break; // Slug is unique
+      }
+      
+      // Generate new slug with counter
+      const baseSlug = product.slug.replace(/-\d+$/, ''); // Remove existing counter
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
     const [newProduct] = await db
       .insert(products)
       .values({
         ...product,
+        slug,
         updatedAt: new Date(),
       })
       .returning();

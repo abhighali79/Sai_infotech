@@ -59,22 +59,29 @@ Can you provide more details about pricing, availability, and specifications?`;
     return stars;
   };
 
-  const renderSpecifications = () => {
+  const renderSpecifications = (): React.ReactNode => {
     if (!product.specifications) return null;
 
-    const specs = typeof product.specifications === 'string' 
-      ? JSON.parse(product.specifications) 
-      : product.specifications;
+    try {
+      const specs = typeof product.specifications === 'string' 
+        ? JSON.parse(product.specifications) 
+        : product.specifications;
 
-    return (
-      <div className="grid grid-cols-2 gap-4 text-sm">
-        {Object.entries(specs).map(([key, value]) => (
-          <div key={key}>
-            <strong className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</strong> {String(value)}
-          </div>
-        ))}
-      </div>
-    );
+      if (!specs || typeof specs !== 'object') return null;
+
+      return (
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          {Object.entries(specs).map(([key, value]) => (
+            <div key={key}>
+              <strong className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</strong> {String(value)}
+            </div>
+          ))}
+        </div>
+      );
+    } catch (error) {
+      console.error('Error parsing specifications:', error);
+      return null;
+    }
   };
 
   const mainImage = product.images && product.images.length > 0 
@@ -150,7 +157,7 @@ Can you provide more details about pricing, availability, and specifications?`;
               </p>
             </div>
             
-            {product.specifications && renderSpecifications() && (
+            {product.specifications && (
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-3">Specifications</h3>
                 {renderSpecifications()}
