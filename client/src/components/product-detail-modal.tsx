@@ -131,15 +131,14 @@ Can you provide more details about pricing, availability, and specifications?`;
               </p>
             </div>
             
-            {product.specifications && (() => {
-              const specs = renderSpecifications();
-              return specs ? (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-3">Specifications</h3>
-                  {specs}
+            {product.specifications && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3">Specifications</h3>
+                <div>
+                  {renderSpecifications()}
                 </div>
-              ) : null;
-            })()}
+              </div>
+            )}
             
             <div className="space-y-3">
               <Button 

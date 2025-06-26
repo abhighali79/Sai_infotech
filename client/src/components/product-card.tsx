@@ -39,9 +39,9 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       return optimizeImageUrl(url, {
         width: 300,
         height: 300,
-        crop: 'fill',
-        quality: 'auto:low',
-        format: 'auto'
+        crop: 'fill' as const,
+        quality: 'auto:low' as const,
+        format: 'auto' as const
       });
     } catch {
       return url; // Fallback to original URL if optimization fails
