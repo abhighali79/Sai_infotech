@@ -1,6 +1,5 @@
 import Navigation from "@/components/navigation";
 import HeroSection from "@/components/hero-section";
-import CategoriesSection from "@/components/categories-section";
 import ProductCatalog from "@/components/product-catalog";
 import ServicesSection from "@/components/services-section";
 import ContactSection from "@/components/contact-section";
@@ -56,7 +55,6 @@ export default function HomePage() {
       <Navigation />
       <main>
         <HeroSection />
-        <CategoriesSection onCategorySelect={handleCategoryFilter} />
         <ProductCatalog categoryFilter={categoryFilter} />
         <ServicesSection />
         <ContactSection />
