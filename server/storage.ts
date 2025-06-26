@@ -237,7 +237,7 @@ export class DatabaseStorage implements IStorage {
   async createProduct(product: InsertProduct): Promise<Product> {
     // Generate unique slug
     let slug = product.slug;
-    let counter = 1;
+    let slugCounter = 1;
     
     // Check if slug already exists and make it unique
     while (true) {
@@ -253,8 +253,30 @@ export class DatabaseStorage implements IStorage {
       
       // Generate new slug with counter
       const baseSlug = product.slug.replace(/-\d+$/, ''); // Remove existing counter
-      slug = `${baseSlug}-${counter}`;
-      counter++;
+      slug = `${baseSlug}-${slugCounter}`;
+      slugCounter++;
+    }
+
+    // Generate unique SKU
+    let sku = product.sku || slug.toUpperCase();
+    let skuCounter = 1;
+    
+    // Check if SKU already exists and make it unique
+    while (true) {
+      const existing = await db
+        .select({ id: products.id })
+        .from(products)
+        .where(eq(products.sku, sku))
+        .limit(1);
+      
+      if (existing.length === 0) {
+        break; // SKU is unique
+      }
+      
+      // Generate new SKU with counter
+      const baseSku = (product.sku || slug.toUpperCase()).replace(/-\d+$/, ''); // Remove existing counter
+      sku = `${baseSku}-${skuCounter}`;
+      skuCounter++;
     }
 
     const [newProduct] = await db
@@ -262,6 +284,7 @@ export class DatabaseStorage implements IStorage {
       .values({
         ...product,
         slug,
+        sku,
         updatedAt: new Date(),
       })
       .returning();
