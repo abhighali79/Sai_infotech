@@ -17,7 +17,19 @@ export default function ProductDetailModal({ product, isOpen, onClose }: Product
   if (!product) return null;
 
   const handleWhatsAppInquiry = () => {
-    const message = `Hi! I'm interested in the ${product.name}. Can you provide more details about pricing and availability?`;
+    const productUrl = `${window.location.origin}/?product=${product.slug}`;
+    const message = `Hi! I'm interested in the following product:
+
+*${product.name}*
+Price: ₹${parseFloat(product.price).toLocaleString()}
+Category: ${product.category?.name || 'General'}
+
+${product.shortDescription || 'High-quality product with excellent features.'}
+
+Product Link: ${productUrl}
+
+Can you provide more details about pricing, availability, and specifications?`;
+    
     const whatsappUrl = `https://wa.me/917411180528?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -58,7 +70,7 @@ export default function ProductDetailModal({ product, isOpen, onClose }: Product
       <div className="grid grid-cols-2 gap-4 text-sm">
         {Object.entries(specs).map(([key, value]) => (
           <div key={key}>
-            <strong className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</strong> {value as string}
+            <strong className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</strong> {String(value)}
           </div>
         ))}
       </div>

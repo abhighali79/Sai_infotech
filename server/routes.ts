@@ -36,7 +36,18 @@ export function registerRoutes(app: Express): Server {
   // Get products with filtering
   app.get("/api/products", async (req, res) => {
     try {
-      const { category, search, featured, limit, offset } = req.query;
+      const { category, search, featured, limit, offset, slug } = req.query;
+      
+      // If slug is provided, try to find the specific product
+      if (slug) {
+        const product = await storage.getProductBySlug(slug as string);
+        if (product) {
+          res.json([product]);
+        } else {
+          res.json([]);
+        }
+        return;
+      }
       
       const filters = {
         category: category as string,

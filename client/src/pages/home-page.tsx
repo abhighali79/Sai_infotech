@@ -5,10 +5,33 @@ import ProductCatalog from "@/components/product-catalog";
 import ServicesSection from "@/components/services-section";
 import ContactSection from "@/components/contact-section";
 import Footer from "@/components/footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import type { ProductWithCategory } from "@shared/schema";
+import ProductDetailModal from "@/components/product-detail-modal";
 
 export default function HomePage() {
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null);
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+
+  // Check for product parameter on page load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productSlug = urlParams.get('product');
+    if (productSlug) {
+      // Find and open the product modal
+      fetch(`/api/products?slug=${productSlug}`)
+        .then(res => res.json())
+        .then(products => {
+          if (products.length > 0) {
+            setSelectedProduct(products[0]);
+            setIsProductModalOpen(true);
+          }
+        })
+        .catch(console.error);
+    }
+  }, []);
 
   const handleCategoryFilter = (category: string) => {
     setCategoryFilter(category);
@@ -17,6 +40,15 @@ export default function HomePage() {
     if (productsSection) {
       productsSection.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const handleCloseProductModal = () => {
+    setIsProductModalOpen(false);
+    setSelectedProduct(null);
+    // Remove product parameter from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete('product');
+    window.history.replaceState({}, '', url.toString());
   };
 
   return (
@@ -30,6 +62,12 @@ export default function HomePage() {
         <ContactSection />
       </main>
       <Footer />
+      
+      <ProductDetailModal
+        product={selectedProduct}
+        isOpen={isProductModalOpen}
+        onClose={handleCloseProductModal}
+      />
     </div>
   );
 }
